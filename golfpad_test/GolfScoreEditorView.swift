@@ -17,104 +17,110 @@ struct GolfScoreEditor: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 16) {
-                HStack {
-                    // Table legend
-                    VStack(alignment: .center, spacing: GolfEditorConstants.tableVerticalSpacting) {
-                        Text("")
-                        ForEach(viewModel.players) { player in
-                            PlayerNameTextField(player: player, viewModel: viewModel)
-                        }
+            ZStack {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        hideKeyboard()
                     }
-                    
-                                      
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        VStack(alignment: .leading, spacing: GolfEditorConstants.tableVerticalSpacting) {
-                            // Hole indexes
-                            HStack {
-                                ForEach(1...18, id: \.self) { hole in
-                                    Text("\(hole)")
-                                        .frame(width: GolfEditorConstants.scoreCoumnWidth)
-                                }
-                            }
-                            .padding(.horizontal)
-                            
-                            // Players score
-                            VStack(alignment: .leading) {
-                                ForEach(viewModel.players) { player in
-                                    PlayerRow(player: player, viewModel: viewModel)
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                    }
-                    .simultaneousGesture(
-                        DragGesture(minimumDistance: 0)
-                            .onChanged { _ in
-                                withAnimation {
-                                    hideHint()
-                                }
-                            }
-                    )
-                    .scrollIndicators(.visible)
-                    
-                }
-                .padding()
-                
-                if showHint {
-                    Text("Hint: scroll the table")
-                        .padding()
-                        .background(Color.black.opacity(0.7))
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                        .onTapGesture {
-                            withAnimation {
-                                showHint = false
-                            }
-                        }
-                }
-                
-                Spacer()
-                
-                // Final score section
-                VStack(spacing: GolfEditorConstants.finalScoreSpacing) {
-                    Text("Final score")
-                        .fontWeight(.bold)
-                        //.bold()
-                        
-                    
+                    .ignoresSafeArea()
+
+                VStack(spacing: 16) {
                     HStack {
-                        ForEach(viewModel.players) { player in
-                            Text("\(player.name ?? "Player"): \(viewModel.playerTotalSkins(player.id))")
-                                .padding()
-                                .multilineTextAlignment(.center)
-                                .lineLimit(3)
-                                .background(
-                                    viewModel.isWinner(player.id) ?
-                                        Color.green :
-                                        Color.gray
-                                )
-                                .foregroundColor(.white)
-                                .cornerRadius(10)
+                        // Table legend
+                        VStack(alignment: .center, spacing: GolfEditorConstants.tableVerticalSpacting) {
+                            Text("")
+                            ForEach(viewModel.players) { player in
+                                PlayerNameTextField(player: player, viewModel: viewModel)
+                            }
                         }
+                        
+                                          
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            VStack(alignment: .leading, spacing: GolfEditorConstants.tableVerticalSpacting) {
+                                // Hole indexes
+                                HStack {
+                                    ForEach(1...18, id: \.self) { hole in
+                                        Text("\(hole)")
+                                            .frame(width: GolfEditorConstants.scoreCoumnWidth)
+                                    }
+                                }
+                                .padding(.horizontal)
+                                
+                                // Players score
+                                VStack(alignment: .leading) {
+                                    ForEach(viewModel.players) { player in
+                                        PlayerRow(player: player, viewModel: viewModel)
+                                    }
+                                }
+                                .padding(.horizontal)
+                            }
+                        }
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 0)
+                                .onChanged { _ in
+                                    withAnimation {
+                                        hideHint()
+                                    }
+                                }
+                        )
+                        .scrollIndicators(.visible)
+                        
+                    }
+                    .padding()
+                    
+                    if showHint {
+                        Text("Hint: scroll the table")
+                            .padding()
+                            .background(Color.black.opacity(0.7))
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .onTapGesture {
+                                withAnimation {
+                                    showHint = false
+                                }
+                            }
                     }
                     
+                    Spacer()
                     
-                    Button(action: {
-                        viewModel.restart()
-                    }) {
-                        Text("Restart")
+                    // Final score section
+                    VStack(spacing: GolfEditorConstants.finalScoreSpacing) {
+                        Text("Final score")
+                            .fontWeight(.bold)
+                            //.bold()
+                            
+                        
+                        HStack {
+                            ForEach(viewModel.players) { player in
+                                Text("\(player.name ?? "Player"): \(viewModel.playerTotalSkins(player.id))")
+                                    .padding()
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(3)
+                                    .background(
+                                        viewModel.isWinner(player.id) ?
+                                            Color.green :
+                                            Color.gray
+                                    )
+                                    .foregroundColor(.white)
+                                    .cornerRadius(10)
+                            }
+                        }
+                        
+                        
+                        Button(action: {
+                            viewModel.restart()
+                        }) {
+                            Text("Restart")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.red)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.red)
+                    .padding()
+                    
                 }
-                .padding()
-                
+                .navigationTitle("Golf skins")
             }
-            .navigationTitle("Golf skins")
-        }
-        .onTapGesture {
-            hideKeyboard()
         }
     }
     
